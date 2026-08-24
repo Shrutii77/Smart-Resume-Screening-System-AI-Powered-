@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Resume Screening System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.box{width:100%;padding:12px;background:#1e293b;border:1px solid #334155;border-radius:12px;color:white}
+</style>
+</head>
+
+<body class="bg-gradient-to-tr from-gray-950 via-indigo-950 to-purple-950 min-h-screen flex items-center justify-center p-6 text-slate-100">
+
+<div class="relative bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl flex w-full max-w-5xl overflow-hidden border border-slate-700/60">
+
+<div class="hidden lg:flex w-1/2 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center relative items-center justify-center p-12">
+
+<div class="absolute inset-0 bg-gradient-to-t from-indigo-950/90 via-indigo-950/70 to-transparent"></div>
+
+<div class="relative text-white">
+<span class="text-indigo-300 text-xs">AI Powered</span>
+<h2 class="text-4xl font-bold">Smart Resume Screening</h2>
+<p class="text-indigo-200">Streamline your hiring process with instant candidate matching.</p>
+</div>
+
+</div>
+
+<div class="w-full lg:w-1/2 p-8 lg:p-12">
+
+<h1 class="text-2xl font-bold mb-6">Screen Resume</h1>
+
+<form id="form">
+
+<textarea id="job" class="box" rows="3"
+placeholder="Enter job description..." required></textarea>
+
+<input id="file" class="box" type="file" accept=".pdf">
+
+<textarea id="text" class="box" rows="3"
+placeholder="Paste resume text..."></textarea>
+
+<button class="box bg-indigo-600">Screen Resume</button>
+
+</form>
+
+<div id="result" class="box hidden">
+<h2>Result</h2>
+<p id="score"></p>
+<p id="matched"></p>
+<p id="missing"></p>
+<p id="explain"></p>
+</div>
+
+</div>
+</div>
+
+<script>
+form.onsubmit=async e=>{
+e.preventDefault();
+
+let d=new FormData();
+d.append("job_description",job.value);
+d.append("resume_text",text.value);
+if(file.files[0])d.append("resume_file",file.files[0]);
+
+let r=await fetch("/screen_resume",{method:"POST",body:d});
+let x=await r.json();
+
+result.classList.remove("hidden");
+score.innerText="Match Score: "+x.match_score+"%";
+matched.innerText="Matched Skills: "+x.matched_skills;
+missing.innerText="Missing Skills: "+x.missing_skills;
+explain.innerText="Explanation: "+x.explanation;
+}
+</script>
+
+</body>
+</html>
