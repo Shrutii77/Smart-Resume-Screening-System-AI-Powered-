@@ -1,8 +1,6 @@
 fastapi
 uvicorn
-jinja2
 python-multipart
-openai
+google-generativeai
 python-dotenv
-scikit-learn
 PyPDF2
