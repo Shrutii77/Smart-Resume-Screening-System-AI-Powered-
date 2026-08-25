@@ -9,7 +9,7 @@ from PyPDF2 import PdfReader
 load_dotenv()
 app = FastAPI()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-3.6-flash")
+model = genai.GenerativeModel("gemini-3.1-flash")
 
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -18,6 +18,7 @@ def home():
 @app.post("/screen_resume")
 async def screen(job_description: str = Form(...), resume_file: UploadFile = File(None), resume_text: str = Form("")):
     try:
+        # PDF ya text se content extract karna
         content = ""
         if resume_file:
             reader = PdfReader(resume_file.file)
@@ -28,6 +29,7 @@ async def screen(job_description: str = Form(...), resume_file: UploadFile = Fil
         if not content:
             return {"error": "Please provide a resume file or text."}
         
+        # Prompt jisse model sirf JSON de
         prompt = f"""
         Analyze this resume against the job description for a Python developer role:
         JOB DESCRIPTION: {job_description}
@@ -45,6 +47,7 @@ async def screen(job_description: str = Form(...), resume_file: UploadFile = Fil
         response = model.generate_content(prompt)
         text_response = response.text.strip()
         
+        # JSON clean extraction
         if "```json" in text_response:
             text_response = text_response.split("```json")[1].split("```")[0].strip()
         elif "```" in text_response:
